@@ -1,0 +1,100 @@
+【ARマーカーをpythonで書いてRaspberryPi4を使ってARを表示させよう】
+・真似しようとしたサイト
+「ARマーカー作成とARでの画像表示」(https://elsammit-beginnerblg.hatenablog.com/entry/2020/10/10/125246)　
+
+【環境】
+・RaspberryPi4
+・python 3.7.3
+・opencv 4.4.0
+・USBのHDカメラ
+
+【対象者】
+・RaspberryPiを触ったことがない人
+・RaspberryPiが手元にある人
+・ARをこれから勉強しようと思っている人
+
+【やったこと】
+・RaspberryPiで日本語入力するように設定
+・aptとpipをアップグレード
+・openCVのインストール('4.1.0')
+・openCVのインポート
+・"aruco"ライブラリ(AR用のライブラリ)のインストール
+・pythonのコードを用意
+・pythonを実行してカメラを起動
+・カメラでARマーカーを認識
+・ARマーカーを作成
+・自分の好きな画像をARで表示
+
+【うまく行かなかったこと】
+・opencvのインストール
+　以下の参考サイトを参考に改善しようとしたがうまく行かなかった。
+　よく見るとエラーの一文が参考サイトと異なっていた。
+　　参考にしたエラー「ImportError: /home/pi/cv2/cv2.cpython-37m-arm-linux-gnueabihf.so: undefined symbol: __atomic_fetch_add_8」
+　　実際に出たエラー「ImportError: libcblas.so.3: cannot open shared object file: No such file or directory」
+　ライブラリが足りませんとのことだったのでライブラリーをインストールすれば良いことがわかった。
+　インストールすると無事にopencvのバージョン確認をすることができた。
+　-------------------------------------------------------------------------
+　　pi@milktea:~ $ python3
+　　Python 3.7.3 (default, Jul 25 2020, 13:03:44) 
+　　[GCC 8.3.0] on linux
+　　Type "help", "copyright", "credits" or "license" for more information.
+　　>>> import cv2
+　　>>> cv2.__version__
+　　'4.1.0'
+　-------------------------------------------------------------------------
+
+・arucoライブラリのインストール
+　「pip3 install opencv-contrib-python」でarucoライブラリをインストール。
+　インストールしたが「ImportError: libhdf5_serial.so.103: cannot open shared object file: No such file or directory」と出た。
+　libhdf5_serial.soがないみたいなので、必要なパッケージをインストール「sudo apt-get install libhdf5-dev libhdf5-serial-dev」。
+　※参考サイトでは、「libhdf5-100」に関してパッケージをインストールするようになっていたが、これをそのまま実行するとそのパッケージはないと言われてしまうので、エラーになる。
+　最終的にインストールすることができた。
+　-------------------------------------------------------------------------
+　Python 3.7.3 (default, Jul 25 2020, 13:03:44) 
+　[GCC 8.3.0] on linux
+　Type "help", "copyright", "credits" or "license" for more information.
+　>>> import cv2
+　>>> aruco = cv2.aruco
+　-------------------------------------------------------------------------
+
+・ARマーカーに画像の表示
+　「ARマーカー作成とARでの画像表示」のコードを参考にコードを実行し、画像の部分の名前だけ変更し実行したらerrorが出た。
+
+【感想】
+・pipを使うインストールは楽だが調べてみると問題がかなり起こることがわかった。
+・リナックスのコマンドを少し焦ってしまったので勉強しないといけない(：q！、sudo等)
+・python3〜以上を扱う際は「pip」ではなく「pip3」にする
+
+【参考】
+・RaspberryPiの起動〜openCVのインストール
+	「Raspberry Piで日本語入力」
+	(https://www.indoorcorgielec.com/resources/raspberry-pi/raspberry-pi-input-japanese/)
+
+	「RaspberryPiへのOpenCVインストール手順」
+	(https://qiita.com/wk_/items/8db529a6b24a955888db)
+
+	「【Raspberry Pi】Raspberry Pi Zero WにOpenCVの環境を構築する」
+	(https://rikoubou.hatenablog.com/entry/2019/05/21/151337)
+
+	「ラズパイでpython3にopencvを入れたらエラーが出た【対処法】」
+	(https://qiita.com/XM03/items/48463fd910470b226f22)
+
+	「Raspberry Piに構築したOpenCVのエラー解消法」
+	(https://qiita.com/morichu78/items/1575299e6676450c47ed)
+
+	「【OpenCV/Raspberry Pi】 Raspberry PiにOpenCVをインストールしてみる。」
+	(https://hokusonweb.dip.jp/index.php/2020/05/25/raspberrypi-opencv-setup/)
+
+・openCVを使った画像認識〜自作マーカーの表示
+	「【Pythonでプログラミング】arucoライブラリを使ってARマーカを認識してみた」
+	(http://okatenari.com/2017/11/28/python-ar/)
+
+　　　　　「画像を扱う」
+	(http://labs.eecs.tottori-u.ac.jp/sd/Member/oyamada/OpenCV/html/py_tutorials/py_gui/py_image_display/py_image_display.html)
+
+	「Raspberry pi ペイントソフトをインストール」
+	(https://nogesc.wordpress.com/2018/02/12/raspberry-pi-%E3%83%9A%E3%82%A4%E3%83%B3%E3%83%88%E3%82%BD%E3%83%95%E3%83%88%E3%82%92%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB/)
+
+【コマンド】
+・温度を測る
+vcgencmd measure_temp
