@@ -1,0 +1,625 @@
+【ARマーカーをpythonで書いてRaspberryPi4を使ってARを表示させよう】
+・真似しようとしたサイト
+「ARマーカー作成とARでの画像表示」(https://elsammit-beginnerblg.hatenablog.com/entry/2020/10/10/125246)　
+
+【環境】
+・RaspberryPi4
+・python 3.7.3
+・opencv 4.4.0
+・USBのHDカメラ
+
+【対象者】
+・RaspberryPiを触ったことがない人
+・RaspberryPiが手元にある人
+・ARをこれから勉強しようと思っている人
+
+【やったこと】
+・RaspberryPiで日本語入力するように設定
+・aptとpipをアップグレード
+・openCVのインストール('4.1.0')
+・openCVのインポート
+・"aruco"ライブラリ(AR用のライブラリ)のインストール
+・pythonのコードを用意
+・pythonを実行してカメラを起動
+・カメラでARマーカーを認識
+・ARマーカーを作成
+・自分の好きな画像をARで表示
+
+【うまく行かなかったこと】
+・opencvのインストール
+　以下の参考サイトを参考に改善しようとしたがうまく行かなかった。
+　よく見るとエラーの一文が参考サイトと異なっていた。
+　　参考にしたエラー「ImportError: /home/pi/cv2/cv2.cpython-37m-arm-linux-gnueabihf.so: undefined symbol: __atomic_fetch_add_8」
+　　実際に出たエラー「ImportError: libcblas.so.3: cannot open shared object file: No such file or directory」
+　ライブラリが足りませんとのことだったのでライブラリーをインストールすれば良いことがわかった。
+　インストールすると無事にopencvのバージョン確認をすることができた。
+　-------------------------------------------------------------------------
+　　pi@milktea:~ $ python3
+　　Python 3.7.3 (default, Jul 25 2020, 13:03:44) 
+　　[GCC 8.3.0] on linux
+　　Type "help", "copyright", "credits" or "license" for more information.
+　　>>> import cv2
+　　>>> cv2.__version__
+　　'4.1.0'
+　-------------------------------------------------------------------------
+
+・arucoライブラリのインストール
+　「pip3 install opencv-contrib-python」でarucoライブラリをインストール。
+　インストールしたが「ImportError: libhdf5_serial.so.103: cannot open shared object file: No such file or directory」と出た。
+　libhdf5_serial.soがないみたいなので、必要なパッケージをインストール「sudo apt-get install libhdf5-dev libhdf5-serial-dev」。
+　※参考サイトでは、「libhdf5-100」に関してパッケージをインストールするようになっていたが、これをそのまま実行するとそのパッケージはないと言われてしまうので、エラーになる。
+　最終的にインストールすることができた。
+　-------------------------------------------------------------------------
+　Python 3.7.3 (default, Jul 25 2020, 13:03:44) 
+　[GCC 8.3.0] on linux
+　Type "help", "copyright", "credits" or "license" for more information.
+　>>> import cv2
+　>>> aruco = cv2.aruco
+　-------------------------------------------------------------------------
+
+・ARマーカーに画像の表示
+　「ARマーカー作成とARでの画像表示」のコードを参考にコードを実行し、画像の部分の名前だけ変更し実行したらerrorが出た。
+
+【感想】
+・pipを使うインストールは楽だが調べてみると問題がかなり起こることがわかった。
+・リナックスのコマンドを少し焦ってしまったので勉強しないといけない(：q！、sudo等)
+・python3〜以上を扱う際は「pip」ではなく「pip3」にする
+
+【参考】
+・RaspberryPiの起動〜openCVのインストール
+	「Raspberry Piで日本語入力」
+	(https://www.indoorcorgielec.com/resources/raspberry-pi/raspberry-pi-input-japanese/)
+
+	「RaspberryPiへのOpenCVインストール手順」
+	(https://qiita.com/wk_/items/8db529a6b24a955888db)
+
+	「【Raspberry Pi】Raspberry Pi Zero WにOpenCVの環境を構築する」
+	(https://rikoubou.hatenablog.com/entry/2019/05/21/151337)
+
+	「ラズパイでpython3にopencvを入れたらエラーが出た【対処法】」
+	(https://qiita.com/XM03/items/48463fd910470b226f22)
+
+	「Raspberry Piに構築したOpenCVのエラー解消法」
+	(https://qiita.com/morichu78/items/1575299e6676450c47ed)
+
+	「【OpenCV/Raspberry Pi】 Raspberry PiにOpenCVをインストールしてみる。」
+	(https://hokusonweb.dip.jp/index.php/2020/05/25/raspberrypi-opencv-setup/)
+
+・openCVを使った画像認識〜自作マーカーの表示
+	「【Pythonでプログラミング】arucoライブラリを使ってARマーカを認識してみた」
+	(http://okatenari.com/2017/11/28/python-ar/)
+
+　　　　　「画像を扱う」
+	(http://labs.eecs.tottori-u.ac.jp/sd/Member/oyamada/OpenCV/html/py_tutorials/py_gui/py_image_display/py_image_display.html)
+
+	「Raspberry pi ペイントソフトをインストール」
+	(https://nogesc.wordpress.com/2018/02/12/raspberry-pi-%E3%83%9A%E3%82%A4%E3%83%B3%E3%83%88%E3%82%BD%E3%83%95%E3%83%88%E3%82%92%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB/)
+
+【コマンド】
+・温度を測る
+vcgencmd measure_temp
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+pi@milktea:~ $ find . -name '.*.swp'|xargs rm
+find: ‘./.dbus’: 許可がありません
+pi@milktea:~ $ sudo find . -name '.*.swp'|xargs rm
+rm: オペランドがありません
+Try 'rm --help' for more information.
+pi@milktea:~ $ rm --help
+使用法: rm [オプション]... [ファイル]...
+Remove (unlink) the FILE(s).
+
+  -f, --force           ignore nonexistent files and arguments, never prompt
+  -i                    prompt before every removal
+  -I                    prompt once before removing more than three files, or
+                          when removing recursively; less intrusive than -i,
+                          while still giving protection against most mistakes
+      --interactive[=WHEN]  prompt according to WHEN: never, once (-I), or
+                          always (-i); without WHEN, prompt always
+      --one-file-system  階層を再帰的に削除するときに、コマンドライン引数と
+                          異なったファイルシステムにあるディレクトリをス
+                          キップする
+      --no-preserve-root  do not treat '/' specially
+      --preserve-root[=all]  do not remove '/' (default);
+                              with 'all', reject any command line argument
+                              on a separate device from its parent
+  -r, -R, --recursive   remove directories and their contents recursively
+  -d, --dir             remove empty directories
+  -v, --verbose         explain what is being done
+      --help     この使い方を表示して終了する
+      --version  バージョン情報を表示して終了する
+
+デフォルトでは rm はディレクトリを削除しません。ディレクトリをその中身全てを
+含めて削除するときには --recursive (-r または -R) オプションを使用してください。
+
+To remove a file whose name starts with a '-', for example '-foo',
+use one of these commands:
+  rm -- -foo
+
+  rm ./-foo
+
+ファイルの削除に rm を使った場合、十分な専門性と時間があれば、ファイル内容
+の一部を復元できるかもしれないということには留意してください。もしファイル
+内容を本当に復元不可能にする保証を得たければ、shred の利用を考えてください。
+
+GNU coreutils online help: <https://www.gnu.org/software/coreutils/>
+Report rm translation bugs to <https://translationproject.org/team/>
+Full documentation at: <https://www.gnu.org/software/coreutils/rm>
+or available locally via: info '(coreutils) rm invocation'
+pi@milktea:~ $ find . -name '.*.swp'|xargs rm
+find: ‘./.dbus’: 許可がありません
+rm: オペランドがありません
+Try 'rm --help' for more information.
+pi@milktea:~ $ sudo find . -name '.*.swp'|xargs rm
+rm: オペランドがありません
+Try 'rm --help' for more information.
+pi@milktea:~ $ find . -name '.*.swp'|xargs rm
+find: ‘./.dbus’: 許可がありません
+rm: オペランドがありません
+Try 'rm --help' for more information.
+pi@milktea:~ $ find . -name '.*.swp'
+find: ‘./.dbus’: 許可がありません
+pi@milktea:~ $ sudo find . -name '.*.swp'
+pi@milktea:~ $ sudo find . -name '.*.swp'|xargs rm
+rm: オペランドがありません
+Try 'rm --help' for more information.
+pi@milktea:~ $ sudo find . -name '.*.swap'
+pi@milktea:~ $ cd var
+bash: cd: var: そのようなファイルやディレクトリはありません
+pi@milktea:~ $ cd /var
+pi@milktea:/var $ sudo rm swap
+rm: 'swap' を削除できません: 許可されていない操作です
+pi@milktea:/var $ vim.tiny .bashrc
+pi@milktea:/var $ ^C
+pi@milktea:/var $ ^C
+pi@milktea:/var $ cd
+pi@milktea:~ $ vim.tiny .bashrc
+pi@milktea:~ $ python3
+Python 3.7.3 (default, Jul 25 2020, 13:03:44) 
+[GCC 8.3.0] on linux
+Type "help", "copyright", "credits" or "license" for more information.
+>>> import cv2
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "/usr/local/lib/python3.7/dist-packages/cv2/__init__.py", line 3, in <module>
+    from .cv2 import *
+ImportError: libcblas.so.3: cannot open shared object file: No such file or directory
+>>> cv2.__version__
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+NameError: name 'cv2' is not defined
+>>> import cv
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+ModuleNotFoundError: No module named 'cv'
+>>> import cv2
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "/usr/local/lib/python3.7/dist-packages/cv2/__init__.py", line 3, in <module>
+    from .cv2 import *
+ImportError: libcblas.so.3: cannot open shared object file: No such file or directory
+>>> exit()
+pi@milktea:~ $ sudo apt-get install libjasper-dev
+パッケージリストを読み込んでいます... 完了
+依存関係ツリーを作成しています                
+状態情報を読み取っています... 完了
+以下のパッケージが自動でインストールされましたが、もう必要とされていません:
+  libexiv2-14 libgfortran3 libgmime-2.6-0 libncurses5 libssl1.0.2 rpi-eeprom-images uuid-dev
+これを削除するには 'sudo apt autoremove' を利用してください。
+以下の追加パッケージがインストールされます:
+  libjasper1
+提案パッケージ:
+  libjasper-runtime
+以下のパッケージが新たにインストールされます:
+  libjasper-dev libjasper1
+アップグレード: 0 個、新規インストール: 2 個、削除: 0 個、保留: 1 個。
+611 kB のアーカイブを取得する必要があります。
+この操作後に追加で 1,207 kB のディスク容量が消費されます。
+続行しますか? [Y/n] y
+取得:1 http://ftp.jaist.ac.jp/pub/Linux/raspbian-archive/raspbian buster/main armhf libjasper1 armhf 1.900.1-debian1-2.4+deb8u1 [110 kB]
+取得:2 http://ftp.jaist.ac.jp/pub/Linux/raspbian-archive/raspbian buster/main armhf libjasper-dev armhf 1.900.1-debian1-2.4+deb8u1 [501 kB]
+611 kB を 2秒 で取得しました (350 kB/s)
+以前に未選択のパッケージ libjasper1:armhf を選択しています。
+(データベースを読み込んでいます ... 現在 166772 個のファイルとディレクトリがインストールされています。)
+.../libjasper1_1.900.1-debian1-2.4+deb8u1_armhf.deb を展開する準備をしています ...
+libjasper1:armhf (1.900.1-debian1-2.4+deb8u1) を展開しています...
+以前に未選択のパッケージ libjasper-dev を選択しています。
+.../libjasper-dev_1.900.1-debian1-2.4+deb8u1_armhf.deb を展開する準備をしています ...
+libjasper-dev (1.900.1-debian1-2.4+deb8u1) を展開しています...
+libjasper1:armhf (1.900.1-debian1-2.4+deb8u1) を設定しています ...
+libjasper-dev (1.900.1-debian1-2.4+deb8u1) を設定しています ...
+pi@milktea:~ $ python3
+Python 3.7.3 (default, Jul 25 2020, 13:03:44) 
+[GCC 8.3.0] on linux
+Type "help", "copyright", "credits" or "license" for more information.
+>>> import cv2
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "/usr/local/lib/python3.7/dist-packages/cv2/__init__.py", line 3, in <module>
+    from .cv2 import *
+ImportError: libcblas.so.3: cannot open shared object file: No such file or directory
+>>> exit()
+pi@milktea:~ $ sudo apt-get install libatlas-base-dev
+パッケージリストを読み込んでいます... 完了
+依存関係ツリーを作成しています                
+状態情報を読み取っています... 完了
+以下のパッケージが自動でインストールされましたが、もう必要とされていません:
+  libexiv2-14 libgfortran3 libgmime-2.6-0 libncurses5 libssl1.0.2 rpi-eeprom-images uuid-dev
+これを削除するには 'sudo apt autoremove' を利用してください。
+以下の追加パッケージがインストールされます:
+  libatlas3-base
+提案パッケージ:
+  libatlas-doc liblapack-doc
+以下のパッケージが新たにインストールされます:
+  libatlas-base-dev libatlas3-base
+アップグレード: 0 個、新規インストール: 2 個、削除: 0 個、保留: 1 個。
+5,365 kB のアーカイブを取得する必要があります。
+この操作後に追加で 32.1 MB のディスク容量が消費されます。
+続行しますか? [Y/n] y
+取得:1 http://ftp.jaist.ac.jp/pub/Linux/raspbian-archive/raspbian buster/main armhf libatlas3-base armhf 3.10.3-8+rpi1 [2,399 kB]
+取得:2 http://ftp.jaist.ac.jp/pub/Linux/raspbian-archive/raspbian buster/main armhf libatlas-base-dev armhf 3.10.3-8+rpi1 [2,966 kB]
+5,365 kB を 10秒 で取得しました (557 kB/s)     
+以前に未選択のパッケージ libatlas3-base:armhf を選択しています。
+(データベースを読み込んでいます ... 現在 166805 個のファイルとディレクトリがインストールされています。)
+.../libatlas3-base_3.10.3-8+rpi1_armhf.deb を展開する準備をしています ...
+libatlas3-base:armhf (3.10.3-8+rpi1) を展開しています...
+以前に未選択のパッケージ libatlas-base-dev:armhf を選択しています。
+.../libatlas-base-dev_3.10.3-8+rpi1_armhf.deb を展開する準備をしています ...
+libatlas-base-dev:armhf (3.10.3-8+rpi1) を展開しています...
+libatlas3-base:armhf (3.10.3-8+rpi1) を設定しています ...
+update-alternatives: /usr/lib/arm-linux-gnueabihf/libblas.so.3 (libblas.so.3-arm-linux-gnueabihf) を提供するために自動モードで /usr/lib/arm-linux-gnueabihf/atlas/libblas.so.3 を使います
+update-alternatives: /usr/lib/arm-linux-gnueabihf/liblapack.so.3 (liblapack.so.3-arm-linux-gnueabihf) を提供するために自動モードで /usr/lib/arm-linux-gnueabihf/atlas/liblapack.so.3 を使います
+libatlas-base-dev:armhf (3.10.3-8+rpi1) を設定しています ...
+update-alternatives: /usr/lib/arm-linux-gnueabihf/libblas.so (libblas.so-arm-linux-gnueabihf) を提供するために自動モードで /usr/lib/arm-linux-gnueabihf/atlas/libblas.so を使います
+update-alternatives: /usr/lib/arm-linux-gnueabihf/liblapack.so (liblapack.so-arm-linux-gnueabihf) を提供するために自動モードで /usr/lib/arm-linux-gnueabihf/atlas/liblapack.so を使います
+libc-bin (2.28-10+rpi1) のトリガを処理しています ...
+pi@milktea:~ $ python3
+Python 3.7.3 (default, Jul 25 2020, 13:03:44) 
+[GCC 8.3.0] on linux
+Type "help", "copyright", "credits" or "license" for more information.
+>>> import cv2
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "/usr/local/lib/python3.7/dist-packages/cv2/__init__.py", line 3, in <module>
+    from .cv2 import *
+ImportError: libQtTest.so.4: cannot open shared object file: No such file or directory
+>>> exit()
+pi@milktea:~ $ $ sudo apt-get install qt4-dev-tools qt4-doc qt4-qtconfig libqt4-test
+bash: $: コマンドが見つかりません
+pi@milktea:~ $ sudo apt-get install qt4-dev-tools qt4-doc qt4-qtconfig libqt4-test
+パッケージリストを読み込んでいます... 完了
+依存関係ツリーを作成しています                
+状態情報を読み取っています... 完了
+以下のパッケージが自動でインストールされましたが、もう必要とされていません:
+  libexiv2-14 libgfortran3 libgmime-2.6-0 libncurses5 libssl1.0.2 rpi-eeprom-images uuid-dev
+これを削除するには 'sudo apt autoremove' を利用してください。
+以下の追加パッケージがインストールされます:
+  libgl-dev libgl1-mesa-dev libglu1-mesa-dev libglx-dev libphonon4 libpulse-mainloop-glib0 libqt4-declarative libqt4-designer libqt4-dev libqt4-dev-bin libqt4-help libqt4-network libqt4-opengl libqt4-opengl-dev libqt4-qt3support
+  libqt4-script libqt4-scripttools libqt4-sql libqt4-sql-sqlite libqt4-svg libqt4-xmlpatterns qt4-designer qt4-linguist-tools qt4-qmake
+提案パッケージ:
+  libqt4-declarative-folderlistmodel libqt4-declarative-gestures libqt4-declarative-particles libqt4-declarative-shaders qt4-qmlviewer default-libmysqlclient-dev firebird-dev libpq-dev libsqlite0-dev libsqlite3-dev unixodbc-dev
+  qt4-doc-html
+以下のパッケージが新たにインストールされます:
+  libgl-dev libgl1-mesa-dev libglu1-mesa-dev libglx-dev libphonon4 libpulse-mainloop-glib0 libqt4-declarative libqt4-designer libqt4-dev libqt4-dev-bin libqt4-help libqt4-network libqt4-opengl libqt4-opengl-dev libqt4-qt3support
+  libqt4-script libqt4-scripttools libqt4-sql libqt4-sql-sqlite libqt4-svg libqt4-test libqt4-xmlpatterns qt4-designer qt4-dev-tools qt4-doc qt4-linguist-tools qt4-qmake qt4-qtconfig
+アップグレード: 0 個、新規インストール: 28 個、削除: 0 個、保留: 1 個。
+114 MB のアーカイブを取得する必要があります。
+この操作後に追加で 178 MB のディスク容量が消費されます。
+続行しますか? [Y/n] y
+取得:1 http://archive.raspberrypi.org/debian buster/main armhf libglx-dev armhf 1.3.0-7~bpo10+1 [16.4 kB]
+取得:2 http://ftp.jaist.ac.jp/pub/Linux/raspbian-archive/raspbian buster/main armhf libglu1-mesa-dev armhf 9.0.0-2.1 [169 kB]
+取得:3 http://archive.raspberrypi.org/debian buster/main armhf libgl-dev armhf 1.3.0-7~bpo10+1 [100 kB]                                         
+取得:4 http://ftp.jaist.ac.jp/pub/Linux/raspbian-archive/raspbian buster/main armhf libphonon4 armhf 4:4.10.2-1 [143 kB]
+取得:5 http://archive.raspberrypi.org/debian buster/main armhf libgl1-mesa-dev armhf 19.3.2-1~bpo10+1~rpt2 [49.2 kB]                    
+取得:6 http://archive.raspberrypi.org/debian buster/main armhf libpulse-mainloop-glib0 armhf 12.2-4+deb10u1+rpi2 [37.0 kB]
+取得:7 http://ftp.jaist.ac.jp/pub/Linux/raspbian-archive/raspbian buster/main armhf libqt4-network armhf 4:4.8.7+dfsg-18+rpi1+deb10u1 [492 kB]
+取得:8 http://ftp.jaist.ac.jp/pub/Linux/raspbian-archive/raspbian buster/main armhf libqt4-script armhf 4:4.8.7+dfsg-18+rpi1+deb10u1 [732 kB]
+取得:9 http://ftp.jaist.ac.jp/pub/Linux/raspbian-archive/raspbian buster/main armhf libqt4-sql armhf 4:4.8.7+dfsg-18+rpi1+deb10u1 [129 kB]
+取得:10 http://ftp.jaist.ac.jp/pub/Linux/raspbian-archive/raspbian buster/main armhf libqt4-xmlpatterns armhf 4:4.8.7+dfsg-18+rpi1+deb10u1 [871 kB]
+取得:11 http://ftp.jaist.ac.jp/pub/Linux/raspbian-archive/raspbian buster/main armhf libqt4-declarative armhf 4:4.8.7+dfsg-18+rpi1+deb10u1 [907 kB]
+取得:12 http://ftp.jaist.ac.jp/pub/Linux/raspbian-archive/raspbian buster/main armhf libqt4-designer armhf 4:4.8.7+dfsg-18+rpi1+deb10u1 [3,358 kB]
+取得:13 http://ftp.jaist.ac.jp/pub/Linux/raspbian-archive/raspbian buster/main armhf libqt4-qt3support armhf 4:4.8.7+dfsg-18+rpi1+deb10u1 [893 kB]                                                                                           
+取得:14 http://ftp.jaist.ac.jp/pub/Linux/raspbian-archive/raspbian buster/main armhf libqt4-dev-bin armhf 4:4.8.7+dfsg-18+rpi1+deb10u1 [1,415 kB]                                                                                            
+取得:15 http://ftp.jaist.ac.jp/pub/Linux/raspbian-archive/raspbian buster/main armhf libqt4-help armhf 4:4.8.7+dfsg-18+rpi1+deb10u1 [219 kB]                                                                                                 
+取得:16 http://ftp.jaist.ac.jp/pub/Linux/raspbian-archive/raspbian buster/main armhf libqt4-scripttools armhf 4:4.8.7+dfsg-18+rpi1+deb10u1 [234 kB]                                                                                          
+取得:17 http://ftp.jaist.ac.jp/pub/Linux/raspbian-archive/raspbian buster/main armhf libqt4-svg armhf 4:4.8.7+dfsg-18+rpi1+deb10u1 [158 kB]                                                                                                  
+取得:18 http://ftp.jaist.ac.jp/pub/Linux/raspbian-archive/raspbian buster/main armhf libqt4-test armhf 4:4.8.7+dfsg-18+rpi1+deb10u1 [98.0 kB]                                                                                                
+取得:19 http://ftp.jaist.ac.jp/pub/Linux/raspbian-archive/raspbian buster/main armhf qt4-linguist-tools armhf 4:4.8.7+dfsg-18+rpi1+deb10u1 [739 kB]                                                                                          
+取得:20 http://ftp.jaist.ac.jp/pub/Linux/raspbian-archive/raspbian buster/main armhf qt4-qmake armhf 4:4.8.7+dfsg-18+rpi1+deb10u1 [1,045 kB]                                                                                                 
+取得:21 http://ftp.jaist.ac.jp/pub/Linux/raspbian-archive/raspbian buster/main armhf libqt4-dev armhf 4:4.8.7+dfsg-18+rpi1+deb10u1 [863 kB]                                                                                                  
+取得:22 http://ftp.jaist.ac.jp/pub/Linux/raspbian-archive/raspbian buster/main armhf libqt4-opengl armhf 4:4.8.7+dfsg-18+rpi1+deb10u1 [294 kB]                                                                                               
+取得:23 http://ftp.jaist.ac.jp/pub/Linux/raspbian-archive/raspbian buster/main armhf libqt4-opengl-dev armhf 4:4.8.7+dfsg-18+rpi1+deb10u1 [70.4 kB]                                                                                          
+取得:24 http://ftp.jaist.ac.jp/pub/Linux/raspbian-archive/raspbian buster/main armhf libqt4-sql-sqlite armhf 4:4.8.7+dfsg-18+rpi1+deb10u1 [67.9 kB]                                                                                          
+取得:25 http://ftp.jaist.ac.jp/pub/Linux/raspbian-archive/raspbian buster/main armhf qt4-designer armhf 4:4.8.7+dfsg-18+rpi1+deb10u1 [368 kB]                                                                                                
+取得:26 http://ftp.jaist.ac.jp/pub/Linux/raspbian-archive/raspbian buster/main armhf qt4-dev-tools armhf 4:4.8.7+dfsg-18+rpi1+deb10u1 [3,655 kB]                                                                                             
+取得:27 http://ftp.jaist.ac.jp/pub/Linux/raspbian-archive/raspbian buster/main armhf qt4-doc all 4:4.8.7+dfsg-18+rpi1+deb10u1 [96.2 MB]                                                                                                      
+取得:28 http://ftp.jaist.ac.jp/pub/Linux/raspbian-archive/raspbian buster/main armhf qt4-qtconfig armhf 4:4.8.7+dfsg-18+rpi1+deb10u1 [142 kB]                                                                                                
+114 MB を 1分 28秒 で取得しました (1,296 kB/s)                                                                                                                                                                                               
+以前に未選択のパッケージ libglx-dev:armhf を選択しています。
+(データベースを読み込んでいます ... 現在 167003 個のファイルとディレクトリがインストールされています。)
+.../00-libglx-dev_1.3.0-7~bpo10+1_armhf.deb を展開する準備をしています ...
+libglx-dev:armhf (1.3.0-7~bpo10+1) を展開しています...
+以前に未選択のパッケージ libgl-dev:armhf を選択しています。
+.../01-libgl-dev_1.3.0-7~bpo10+1_armhf.deb を展開する準備をしています ...
+libgl-dev:armhf (1.3.0-7~bpo10+1) を展開しています...
+以前に未選択のパッケージ libgl1-mesa-dev:armhf を選択しています。
+.../02-libgl1-mesa-dev_19.3.2-1~bpo10+1~rpt2_armhf.deb を展開する準備をしています ...
+libgl1-mesa-dev:armhf (19.3.2-1~bpo10+1~rpt2) を展開しています...
+以前に未選択のパッケージ libglu1-mesa-dev:armhf を選択しています。
+.../03-libglu1-mesa-dev_9.0.0-2.1_armhf.deb を展開する準備をしています ...
+libglu1-mesa-dev:armhf (9.0.0-2.1) を展開しています...
+以前に未選択のパッケージ libpulse-mainloop-glib0:armhf を選択しています。
+.../04-libpulse-mainloop-glib0_12.2-4+deb10u1+rpi2_armhf.deb を展開する準備をしています ...
+libpulse-mainloop-glib0:armhf (12.2-4+deb10u1+rpi2) を展開しています...
+以前に未選択のパッケージ libphonon4:armhf を選択しています。
+.../05-libphonon4_4%3a4.10.2-1_armhf.deb を展開する準備をしています ...
+libphonon4:armhf (4:4.10.2-1) を展開しています...
+以前に未選択のパッケージ libqt4-network:armhf を選択しています。
+.../06-libqt4-network_4%3a4.8.7+dfsg-18+rpi1+deb10u1_armhf.deb を展開する準備をしています ...
+libqt4-network:armhf (4:4.8.7+dfsg-18+rpi1+deb10u1) を展開しています...
+以前に未選択のパッケージ libqt4-script:armhf を選択しています。
+.../07-libqt4-script_4%3a4.8.7+dfsg-18+rpi1+deb10u1_armhf.deb を展開する準備をしています ...
+libqt4-script:armhf (4:4.8.7+dfsg-18+rpi1+deb10u1) を展開しています...
+以前に未選択のパッケージ libqt4-sql:armhf を選択しています。
+.../08-libqt4-sql_4%3a4.8.7+dfsg-18+rpi1+deb10u1_armhf.deb を展開する準備をしています ...
+libqt4-sql:armhf (4:4.8.7+dfsg-18+rpi1+deb10u1) を展開しています...
+以前に未選択のパッケージ libqt4-xmlpatterns:armhf を選択しています。
+.../09-libqt4-xmlpatterns_4%3a4.8.7+dfsg-18+rpi1+deb10u1_armhf.deb を展開する準備をしています ...
+libqt4-xmlpatterns:armhf (4:4.8.7+dfsg-18+rpi1+deb10u1) を展開しています...
+以前に未選択のパッケージ libqt4-declarative:armhf を選択しています。
+.../10-libqt4-declarative_4%3a4.8.7+dfsg-18+rpi1+deb10u1_armhf.deb を展開する準備をしています ...
+libqt4-declarative:armhf (4:4.8.7+dfsg-18+rpi1+deb10u1) を展開しています...
+以前に未選択のパッケージ libqt4-designer:armhf を選択しています。
+.../11-libqt4-designer_4%3a4.8.7+dfsg-18+rpi1+deb10u1_armhf.deb を展開する準備をしています ...
+libqt4-designer:armhf (4:4.8.7+dfsg-18+rpi1+deb10u1) を展開しています...
+以前に未選択のパッケージ libqt4-qt3support:armhf を選択しています。
+.../12-libqt4-qt3support_4%3a4.8.7+dfsg-18+rpi1+deb10u1_armhf.deb を展開する準備をしています ...
+libqt4-qt3support:armhf (4:4.8.7+dfsg-18+rpi1+deb10u1) を展開しています...
+以前に未選択のパッケージ libqt4-dev-bin を選択しています。
+.../13-libqt4-dev-bin_4%3a4.8.7+dfsg-18+rpi1+deb10u1_armhf.deb を展開する準備をしています ...
+libqt4-dev-bin (4:4.8.7+dfsg-18+rpi1+deb10u1) を展開しています...
+以前に未選択のパッケージ libqt4-help:armhf を選択しています。
+.../14-libqt4-help_4%3a4.8.7+dfsg-18+rpi1+deb10u1_armhf.deb を展開する準備をしています ...
+libqt4-help:armhf (4:4.8.7+dfsg-18+rpi1+deb10u1) を展開しています...
+以前に未選択のパッケージ libqt4-scripttools:armhf を選択しています。
+.../15-libqt4-scripttools_4%3a4.8.7+dfsg-18+rpi1+deb10u1_armhf.deb を展開する準備をしています ...
+libqt4-scripttools:armhf (4:4.8.7+dfsg-18+rpi1+deb10u1) を展開しています...
+以前に未選択のパッケージ libqt4-svg:armhf を選択しています。
+.../16-libqt4-svg_4%3a4.8.7+dfsg-18+rpi1+deb10u1_armhf.deb を展開する準備をしています ...
+libqt4-svg:armhf (4:4.8.7+dfsg-18+rpi1+deb10u1) を展開しています...
+以前に未選択のパッケージ libqt4-test:armhf を選択しています。
+.../17-libqt4-test_4%3a4.8.7+dfsg-18+rpi1+deb10u1_armhf.deb を展開する準備をしています ...
+libqt4-test:armhf (4:4.8.7+dfsg-18+rpi1+deb10u1) を展開しています...
+以前に未選択のパッケージ qt4-linguist-tools を選択しています。
+.../18-qt4-linguist-tools_4%3a4.8.7+dfsg-18+rpi1+deb10u1_armhf.deb を展開する準備をしています ...
+qt4-linguist-tools (4:4.8.7+dfsg-18+rpi1+deb10u1) を展開しています...
+以前に未選択のパッケージ qt4-qmake を選択しています。
+.../19-qt4-qmake_4%3a4.8.7+dfsg-18+rpi1+deb10u1_armhf.deb を展開する準備をしています ...
+qt4-qmake (4:4.8.7+dfsg-18+rpi1+deb10u1) を展開しています...
+以前に未選択のパッケージ libqt4-dev を選択しています。
+.../20-libqt4-dev_4%3a4.8.7+dfsg-18+rpi1+deb10u1_armhf.deb を展開する準備をしています ...
+libqt4-dev (4:4.8.7+dfsg-18+rpi1+deb10u1) を展開しています...
+以前に未選択のパッケージ libqt4-opengl:armhf を選択しています。
+.../21-libqt4-opengl_4%3a4.8.7+dfsg-18+rpi1+deb10u1_armhf.deb を展開する準備をしています ...
+libqt4-opengl:armhf (4:4.8.7+dfsg-18+rpi1+deb10u1) を展開しています...
+以前に未選択のパッケージ libqt4-opengl-dev を選択しています。
+.../22-libqt4-opengl-dev_4%3a4.8.7+dfsg-18+rpi1+deb10u1_armhf.deb を展開する準備をしています ...
+libqt4-opengl-dev (4:4.8.7+dfsg-18+rpi1+deb10u1) を展開しています...
+以前に未選択のパッケージ libqt4-sql-sqlite:armhf を選択しています。
+.../23-libqt4-sql-sqlite_4%3a4.8.7+dfsg-18+rpi1+deb10u1_armhf.deb を展開する準備をしています ...
+libqt4-sql-sqlite:armhf (4:4.8.7+dfsg-18+rpi1+deb10u1) を展開しています...
+以前に未選択のパッケージ qt4-designer を選択しています。
+.../24-qt4-designer_4%3a4.8.7+dfsg-18+rpi1+deb10u1_armhf.deb を展開する準備をしています ...
+qt4-designer (4:4.8.7+dfsg-18+rpi1+deb10u1) を展開しています...
+以前に未選択のパッケージ qt4-dev-tools を選択しています。
+.../25-qt4-dev-tools_4%3a4.8.7+dfsg-18+rpi1+deb10u1_armhf.deb を展開する準備をしています ...
+qt4-dev-tools (4:4.8.7+dfsg-18+rpi1+deb10u1) を展開しています...
+以前に未選択のパッケージ qt4-doc を選択しています。
+.../26-qt4-doc_4%3a4.8.7+dfsg-18+rpi1+deb10u1_all.deb を展開する準備をしています ...
+qt4-doc (4:4.8.7+dfsg-18+rpi1+deb10u1) を展開しています...
+以前に未選択のパッケージ qt4-qtconfig を選択しています。
+.../27-qt4-qtconfig_4%3a4.8.7+dfsg-18+rpi1+deb10u1_armhf.deb を展開する準備をしています ...
+qt4-qtconfig (4:4.8.7+dfsg-18+rpi1+deb10u1) を展開しています...
+libqt4-network:armhf (4:4.8.7+dfsg-18+rpi1+deb10u1) を設定しています ...
+qt4-linguist-tools (4:4.8.7+dfsg-18+rpi1+deb10u1) を設定しています ...
+libqt4-sql:armhf (4:4.8.7+dfsg-18+rpi1+deb10u1) を設定しています ...
+libqt4-test:armhf (4:4.8.7+dfsg-18+rpi1+deb10u1) を設定しています ...
+libqt4-xmlpatterns:armhf (4:4.8.7+dfsg-18+rpi1+deb10u1) を設定しています ...
+libpulse-mainloop-glib0:armhf (12.2-4+deb10u1+rpi2) を設定しています ...
+libqt4-svg:armhf (4:4.8.7+dfsg-18+rpi1+deb10u1) を設定しています ...
+qt4-qmake (4:4.8.7+dfsg-18+rpi1+deb10u1) を設定しています ...
+qt4-doc (4:4.8.7+dfsg-18+rpi1+deb10u1) を設定しています ...
+libqt4-script:armhf (4:4.8.7+dfsg-18+rpi1+deb10u1) を設定しています ...
+libqt4-opengl:armhf (4:4.8.7+dfsg-18+rpi1+deb10u1) を設定しています ...
+libglx-dev:armhf (1.3.0-7~bpo10+1) を設定しています ...
+libgl-dev:armhf (1.3.0-7~bpo10+1) を設定しています ...
+libqt4-declarative:armhf (4:4.8.7+dfsg-18+rpi1+deb10u1) を設定しています ...
+libqt4-help:armhf (4:4.8.7+dfsg-18+rpi1+deb10u1) を設定しています ...
+libphonon4:armhf (4:4.10.2-1) を設定しています ...
+libqt4-designer:armhf (4:4.8.7+dfsg-18+rpi1+deb10u1) を設定しています ...
+libqt4-sql-sqlite:armhf (4:4.8.7+dfsg-18+rpi1+deb10u1) を設定しています ...
+libqt4-qt3support:armhf (4:4.8.7+dfsg-18+rpi1+deb10u1) を設定しています ...
+libqt4-scripttools:armhf (4:4.8.7+dfsg-18+rpi1+deb10u1) を設定しています ...
+libglu1-mesa-dev:armhf (9.0.0-2.1) を設定しています ...
+qt4-designer (4:4.8.7+dfsg-18+rpi1+deb10u1) を設定しています ...
+libgl1-mesa-dev:armhf (19.3.2-1~bpo10+1~rpt2) を設定しています ...
+qt4-dev-tools (4:4.8.7+dfsg-18+rpi1+deb10u1) を設定しています ...
+libqt4-dev-bin (4:4.8.7+dfsg-18+rpi1+deb10u1) を設定しています ...
+qt4-qtconfig (4:4.8.7+dfsg-18+rpi1+deb10u1) を設定しています ...
+libqt4-dev (4:4.8.7+dfsg-18+rpi1+deb10u1) を設定しています ...
+libqt4-opengl-dev (4:4.8.7+dfsg-18+rpi1+deb10u1) を設定しています ...
+desktop-file-utils (0.23-4) のトリガを処理しています ...
+mime-support (3.62) のトリガを処理しています ...
+gnome-menus (3.31.4-3) のトリガを処理しています ...
+libc-bin (2.28-10+rpi1) のトリガを処理しています ...
+man-db (2.8.5-2) のトリガを処理しています ...
+pi@milktea:~ $ python3
+Python 3.7.3 (default, Jul 25 2020, 13:03:44) 
+[GCC 8.3.0] on linux
+Type "help", "copyright", "credits" or "license" for more information.
+>>> import cv2
+>>> cv2.__version__
+'4.1.0'
+>>> exit()
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+pi@milktea:~ $ vcgencmd measure_temp
+temp=52.5'C
+pi@milktea:~ $ ^C
+pi@milktea:~ $ python3
+Python 3.7.3 (default, Jul 25 2020, 13:03:44) 
+[GCC 8.3.0] on linux
+Type "help", "copyright", "credits" or "license" for more information.
+>>> import cv2
+>>> aruco = cv2.aruco
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+AttributeError: module 'cv2.cv2' has no attribute 'aruco'
+>>> exit()
+pi@milktea:~ $ pip install opencv-contrib-python
+DEPRECATION: Python 2.7 reached the end of its life on January 1st, 2020. Please upgrade your Python as Python 2.7 is no longer maintained. pip 21.0 will drop support for Python 2.7 in January 2021. More details about Python 2 support in pip can be found at https://pip.pypa.io/en/latest/development/release-process/#python-2-support pip 21.0 will remove support for this functionality.
+Defaulting to user installation because normal site-packages is not writeable
+Looking in indexes: https://pypi.org/simple, https://www.piwheels.org/simple
+ERROR: Could not find a version that satisfies the requirement opencv-contrib-python (from versions: none)
+ERROR: No matching distribution found for opencv-contrib-python
+pi@milktea:~ $ pip3 install opencv-contrib-python
+Looking in indexes: https://pypi.org/simple, https://www.piwheels.org/simple
+Collecting opencv-contrib-python
+  Cache entry deserialization failed, entry ignored
+  Cache entry deserialization failed, entry ignored
+  Downloading https://www.piwheels.org/simple/opencv-contrib-python/opencv_contrib_python-4.4.0.46-cp37-cp37m-linux_armv7l.whl (15.6MB)
+    100% |████████████████████████████████| 15.6MB 26kB/s 
+Requirement already satisfied: numpy>=1.14.5 in /usr/lib/python3/dist-packages (from opencv-contrib-python) (1.16.2)
+Installing collected packages: opencv-contrib-python
+Successfully installed opencv-contrib-python-4.4.0.46
+pi@milktea:~ $ python3
+Python 3.7.3 (default, Jul 25 2020, 13:03:44) 
+[GCC 8.3.0] on linux
+Type "help", "copyright", "credits" or "license" for more information.
+>>> import cv2
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "/home/pi/.local/lib/python3.7/site-packages/cv2/__init__.py", line 5, in <module>
+    from .cv2 import *
+ImportError: libhdf5_serial.so.103: cannot open shared object file: No such file or directory
+>>> exit()
+pi@milktea:~ $ $ sudo apt-get install libhdf5-dev libhdf5-serial-dev libhdf5-100
+bash: $: コマンドが見つかりません
+pi@milktea:~ $ sudo apt-get install libhdf5-dev libhdf5-serial-dev libhdf5-100
+パッケージリストを読み込んでいます... 完了
+依存関係ツリーを作成しています                
+状態情報を読み取っています... 完了
+注意、'libhdf5-serial-dev' の代わりに 'libhdf5-dev' を選択します
+パッケージ libhdf5-100 は使用できませんが、別のパッケージから参照されます。
+これは、パッケージが欠落しているか、廃止されたか、または別のソース
+からのみ利用可能であることを意味します。
+しかし、以下のパッケージが置き換えます:
+  libhdf5-103
+
+E: パッケージ 'libhdf5-100' にはインストール候補がありません
+pi@milktea:~ $ python3
+Python 3.7.3 (default, Jul 25 2020, 13:03:44) 
+[GCC 8.3.0] on linux
+Type "help", "copyright", "credits" or "license" for more information.
+>>> import cv2
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "/home/pi/.local/lib/python3.7/site-packages/cv2/__init__.py", line 5, in <module>
+    from .cv2 import *
+ImportError: libhdf5_serial.so.103: cannot open shared object file: No such file or directory
+>>> import cv2
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "/home/pi/.local/lib/python3.7/site-packages/cv2/__init__.py", line 5, in <module>
+    from .cv2 import *
+ImportError: libhdf5_serial.so.103: cannot open shared object file: No such file or directory
+>>> exit()
+pi@milktea:~ $ sudo apt-get install libhdf5-dev libhdf5-serial-dev libhdf5-100
+パッケージリストを読み込んでいます... 完了
+依存関係ツリーを作成しています                
+状態情報を読み取っています... 完了
+注意、'libhdf5-serial-dev' の代わりに 'libhdf5-dev' を選択します
+パッケージ libhdf5-100 は使用できませんが、別のパッケージから参照されます。
+これは、パッケージが欠落しているか、廃止されたか、または別のソース
+からのみ利用可能であることを意味します。
+しかし、以下のパッケージが置き換えます:
+  libhdf5-103
+
+E: パッケージ 'libhdf5-100' にはインストール候補がありません
+pi@milktea:~ $ sudo apt-get install libhdf5-dev libhdf5-serial-dev
+パッケージリストを読み込んでいます... 完了
+依存関係ツリーを作成しています                
+状態情報を読み取っています... 完了
+注意、'libhdf5-serial-dev' の代わりに 'libhdf5-dev' を選択します
+以下のパッケージが自動でインストールされましたが、もう必要とされていません:
+  libexiv2-14 libgfortran3 libgmime-2.6-0 libncurses5 libssl1.0.2 rpi-eeprom-images uuid-dev
+これを削除するには 'sudo apt autoremove' を利用してください。
+以下の追加パッケージがインストールされます:
+  hdf5-helpers libaec-dev libaec0 libhdf5-103 libhdf5-cpp-103 libjpeg-dev libjpeg62-turbo-dev libsz2
+提案パッケージ:
+  libhdf5-doc
+以下のパッケージが新たにインストールされます:
+  hdf5-helpers libaec-dev libaec0 libhdf5-103 libhdf5-cpp-103 libhdf5-dev libjpeg-dev
+  libjpeg62-turbo-dev libsz2
+アップグレード: 0 個、新規インストール: 9 個、削除: 0 個、保留: 1 個。
+3,923 kB のアーカイブを取得する必要があります。
+この操作後に追加で 14.1 MB のディスク容量が消費されます。
+続行しますか? [Y/n] y
+取得:1 http://ftp.jaist.ac.jp/pub/Linux/raspbian-archive/raspbian buster/main armhf hdf5-helpers armhf 1.10.4+repack-10 [35.2 kB]
+取得:2 http://ftp.jaist.ac.jp/pub/Linux/raspbian-archive/raspbian buster/main armhf libaec0 armhf 1.0.2-1 [21.3 kB]
+取得:3 http://ftp.jaist.ac.jp/pub/Linux/raspbian-archive/raspbian buster/main armhf libsz2 armhf 1.0.2-1 [6,640 B]
+取得:4 http://ftp.jaist.ac.jp/pub/Linux/raspbian-archive/raspbian buster/main armhf libaec-dev armhf 1.0.2-1 [19.1 kB]
+取得:5 http://ftp.jaist.ac.jp/pub/Linux/raspbian-archive/raspbian buster/main armhf libhdf5-103 armhf 1.10.4+repack-10 [1,259 kB]
+取得:6 http://ftp.jaist.ac.jp/pub/Linux/raspbian-archive/raspbian buster/main armhf libhdf5-cpp-103 armhf 1.10.4+repack-10 [121 kB]
+取得:7 http://ftp.jaist.ac.jp/pub/Linux/raspbian-archive/raspbian buster/main armhf libjpeg62-turbo-dev armhf 1:1.5.2-2+deb10u1 [181 kB]
+取得:8 http://ftp.jaist.ac.jp/pub/Linux/raspbian-archive/raspbian buster/main armhf libjpeg-dev all 1:1.5.2-2+deb10u1 [57.7 kB]
+取得:9 http://ftp.jaist.ac.jp/pub/Linux/raspbian-archive/raspbian buster/main armhf libhdf5-dev armhf 1.10.4+repack-10 [2,221 kB]
+3,923 kB を 7秒 で取得しました (572 kB/s)                                                                
+以前に未選択のパッケージ hdf5-helpers を選択しています。
+(データベースを読み込んでいます ... 現在 172871 個のファイルとディレクトリがインストールされています。)
+.../0-hdf5-helpers_1.10.4+repack-10_armhf.deb を展開する準備をしています ...
+hdf5-helpers (1.10.4+repack-10) を展開しています...
+以前に未選択のパッケージ libaec0:armhf を選択しています。
+.../1-libaec0_1.0.2-1_armhf.deb を展開する準備をしています ...
+libaec0:armhf (1.0.2-1) を展開しています...
+以前に未選択のパッケージ libsz2:armhf を選択しています。
+.../2-libsz2_1.0.2-1_armhf.deb を展開する準備をしています ...
+libsz2:armhf (1.0.2-1) を展開しています...
+以前に未選択のパッケージ libaec-dev:armhf を選択しています。
+.../3-libaec-dev_1.0.2-1_armhf.deb を展開する準備をしています ...
+libaec-dev:armhf (1.0.2-1) を展開しています...
+以前に未選択のパッケージ libhdf5-103:armhf を選択しています。
+.../4-libhdf5-103_1.10.4+repack-10_armhf.deb を展開する準備をしています ...
+libhdf5-103:armhf (1.10.4+repack-10) を展開しています...
+以前に未選択のパッケージ libhdf5-cpp-103:armhf を選択しています。
+.../5-libhdf5-cpp-103_1.10.4+repack-10_armhf.deb を展開する準備をしています ...
+libhdf5-cpp-103:armhf (1.10.4+repack-10) を展開しています...
+以前に未選択のパッケージ libjpeg62-turbo-dev:armhf を選択しています。
+.../6-libjpeg62-turbo-dev_1%3a1.5.2-2+deb10u1_armhf.deb を展開する準備をしています ...
+libjpeg62-turbo-dev:armhf (1:1.5.2-2+deb10u1) を展開しています...
+以前に未選択のパッケージ libjpeg-dev を選択しています。
+.../7-libjpeg-dev_1%3a1.5.2-2+deb10u1_all.deb を展開する準備をしています ...
+libjpeg-dev (1:1.5.2-2+deb10u1) を展開しています...
+以前に未選択のパッケージ libhdf5-dev を選択しています。
+.../8-libhdf5-dev_1.10.4+repack-10_armhf.deb を展開する準備をしています ...
+libhdf5-dev (1.10.4+repack-10) を展開しています...
+hdf5-helpers (1.10.4+repack-10) を設定しています ...
+libaec0:armhf (1.0.2-1) を設定しています ...
+libjpeg62-turbo-dev:armhf (1:1.5.2-2+deb10u1) を設定しています ...
+libsz2:armhf (1.0.2-1) を設定しています ...
+libaec-dev:armhf (1.0.2-1) を設定しています ...
+libjpeg-dev (1:1.5.2-2+deb10u1) を設定しています ...
+libhdf5-103:armhf (1.10.4+repack-10) を設定しています ...
+libhdf5-cpp-103:armhf (1.10.4+repack-10) を設定しています ...
+libhdf5-dev (1.10.4+repack-10) を設定しています ...
+update-alternatives: /usr/lib/arm-linux-gnueabihf/pkgconfig/hdf5.pc (hdf5.pc) を提供するために自動モードで /usr/lib/arm-linux-gnueabihf/pkgconfig/hdf5-serial.pc を使います
+man-db (2.8.5-2) のトリガを処理しています ...
+libc-bin (2.28-10+rpi1) のトリガを処理しています ...
+pi@milktea:~ $ python3
+Python 3.7.3 (default, Jul 25 2020, 13:03:44) 
+[GCC 8.3.0] on linux
+Type "help", "copyright", "credits" or "license" for more information.
+>>> import cv2
+>>> aruco = cv2.aruco
+>>> exit()
+
