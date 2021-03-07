@@ -8,20 +8,25 @@ import traceback
 sg.theme('DarkAmber')
 
 # ウィンドウに配置するコンポーネント
-layout = [  [sg.Text('表示対象のファイルを指定してください',key='txtFileAllocate',enable_events=True)],
-            [sg.Text('保存先フォルダ',key='arTxtFile',enable_events=True,size=(15,1)),
-             sg.Input(),sg.FolderBrowse('フォルダを選択', key='inputFilePathMk')],
+layout = [  [sg.Text('表示対象のファイルを指定してください',key='txtFileAllocate')],
+            [sg.Text('保存先フォルダ',key='arTxtFile',size=(15,1)),
+             sg.InputText(key='fold'),
+             sg.FolderBrowse('フォルダを選択',key='inputFolderPathMk')],
             [sg.Text('画像ファイル',key='txtFile',size=(15,1)),
-             sg.Input(),sg.FileBrowse('ファイルを選択', enable_events=True,key='inputFilePath')],
-            [sg.Text('',key='txtSpaceFst',enable_events=True,size=(63,1))],
+             sg.InputText(key='filePathImg',enable_events=True),
+             sg.FileBrowse('ファイルを選択',key='inputFilePath')],
+            [sg.Text('カメラ番号',key='camera',size=(15,1)),
+             sg.InputText(default_text='0',key='bangou')],
+            [sg.Text('',key='txtSpaceFst',size=(63,1))],
             [sg.Button('マーカー保存',key='btnShw',size=(10,1)),
              sg.Button('カメラ起動',key='btnActCmr',size=(10,1)),
-             sg.Text('',key='txtSpaceScnd',enable_events=True,size=(35,1)),
+             sg.Text('',key='txtSpaceScnd',size=(35,1)),
              sg.Button('閉じる',key='btnClose',size=(11,1))]
         ]
 
 # 表示するメッセージを格納する配列
-mssge = {'sucRsvMk':'マーカーが保存されました',
+mssge = {'null':'aiueo',
+         'sucRsvMk':'マーカーが保存されました',
          'failDsgntMk':'マーカーの保存先を指定してください',
          'failDsgntImg':'表示したい画像を指定してください',
          'failDsgntMkPath':'マーカーの保存先Pathは「半角英数字」にしてください',
@@ -30,12 +35,44 @@ mssge = {'sucRsvMk':'マーカーが保存されました',
 # ウィンドウの生成
 window = sg.Window('ARマーカー', layout)
 
+def check_camera_connection(camera_bangou):
+
+    error=0
+
+    try:
+        bangou=int(camera_bangou) + 1
+    except ValueError:
+        bangou=11
+
+    if bangou==11:
+        sg.popup("カメラ番号が数値ではありません。")
+        error=1
+
+    true_camera_is = []
+    for camera_number in range(0,10):
+        cap = cv2.VideoCapture(camera_number)
+        ret,frame = cap.read()
+        if ret is True:
+            true_camera_is.append(camera_number)
+
+    if len(true_camera_is)==0:
+        sg.popup("カメラを接続してください。")
+        error=1
+
+    if len(true_camera_is) != bangou:
+        sg.popup("カメラ番号が不一致です。")
+        error=1
+
+    #sg.popup("カメラ台数は、" + str(len(true_camera_is)) + "台です。")
+    cap.release()
+    cv2.destroyAllWindows()
+    return error
+
 # ARマーカーを生成する関数
 def arGenerator(values):
     aruco = cv2.aruco
     dictionary = aruco.getPredefinedDictionary(aruco.DICT_4X4_50)
-    mkrPathFst = values[0]
-
+    mkrPathFst = values['fold']
     mkrPathSec = "\\ar.png"
     mkrPath = mkrPathFst + mkrPathSec
 
@@ -59,10 +96,16 @@ def arReader(values):
 
     aruco = cv2.aruco
     dictionary = aruco.getPredefinedDictionary(aruco.DICT_4X4_50) #マーカーサイズを指定
-    picPath = values[1] #表示する画像のpathを指定
-
+    picPath = values['filePathImg'] #表示する画像のpathを指定
     img1 = cv2.imread(picPath)
-    cap = cv2.VideoCapture(0)
+
+    #from IPython.core.debugger import Pdb; Pdb().set_trace()
+    try:
+        x=int(values['bangou'])
+    except ValueError:
+        x=0
+
+    cap = cv2.VideoCapture(x)
 
     while True:
         ret, frame = cap.read()
@@ -92,10 +135,10 @@ def arReader(values):
 
 # main関数
 def main(window):
-
     # イベントループ
     while True:
         event, values = window.read()
+
 
         # 閉じるボタンを押したらwindowを閉じる
         if event == sg.WIN_CLOSED or event == 'btnClose':
@@ -103,29 +146,37 @@ def main(window):
 
         # マーカー保存ボタンを押したらARマーカーを保存する
         elif event == 'btnShw':
+
             # ARマーカーの保存先pathが空白か全角が入っていなかったらARマーカーを指定pathに保存する
-            if values[0] != '':
-                if values[0].encode('utf-8').isalnum() == True or values[0].encode('utf-8').isalnum() == True:
+            if values['fold'] != '':
+                from IPython.core.debugger import Pdb; Pdb().set_trace()
+                if values['fold'].encode('utf-8').isalnum() == True or values['fold'].encode('utf-8').isalnum() == False:
                     arGenerator(values)
                     sg.popup(mssge['sucRsvMk'])
-                    values[0] == ''
                 else:
                     sg.popup(mssge['failDsgntMkPath'])
+                    #window['folderPathMk'].update(mssge['null'])
+                    values['fold'] == ''
             else:
                 sg.popup(mssge['failDsgntMk'])
 
         # カメラ起動ボタンを押したらカメラを起動する
         elif event == 'btnActCmr':
-            if values[0] != '':
-                # 表示する画像のpathに空白か全角が入っていなかったら画像をマーカー上に表示する
-                if values[1] != '':
-                    if values[1].encode('utf-8').isalnum() == True or values[1].encode('utf-8').isalnum() == True:
+
+            camera_bangou=values['bangou']
+            error = check_camera_connection(camera_bangou)
+
+            if values['fold'] != '' and error==0:
+               # 表示する画像のpathに空白か全角が入っていなかったら画像をマーカー上に表示する
+                if values['filePathImg'] != '':
+                    if values['filePathImg'].encode('utf-8').isalnum() == True or values['filePathImg'].encode('utf-8').isalnum() == False:
                         arReader(values)
-                        values[1] == ''
+                        values['filePathImg'] == ''
                     else:
                         sg.popup(mssge['failDsgntImgPath'])
+                        values['filePathImg'] == ''
                 else:
-                    sg.popup(mssge['sucRsvMk'])
+                    sg.popup(mssge['failDsgntMk'])
             else:
                 sg.popup(mssge['failDsgntMk'])
 
